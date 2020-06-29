@@ -1,7 +1,6 @@
 <template>
     <div>
     <div id="app">
-  <v-app id="inspire">
     <v-app id="inspire">
       <v-navigation-drawer
         v-model="drawer"
@@ -18,17 +17,22 @@
   
       <v-main>
         <v-container
-          class="fill-height"
-          fluid>
+          class="fill-height "
+          fluid>   
 
-        </v-container>
+          >
+          <!-- :rules="rules" hide-details="auto" -->
+          <v-text-field label="请发送信息" ></v-text-field>
+          
+        </v-container>          
       </v-main>
-              <v-footer app>
-            <span>&copy; 2020</span>
+      <v-footer app >
+         <span>&copy; 2020</span>
+            
       </v-footer>
-      <Footer></Footer>
+     
     </v-app>
-  </v-app>
+ 
 </div>
     </div>
 </template>
@@ -44,7 +48,6 @@ export default {
     drawer: null,
   }),
   created () {
-    this.$vuetify.theme.dark = true
   },
 
   components: {
