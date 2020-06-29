@@ -21,6 +21,7 @@ const _axios = axios.create(config);
 _axios.interceptors.request.use(
   config => {
     const token = store.state.myToken
+    console.log(token)
     if (token!=null) {
       config.headers['Authorization'] =  token // 让每个请求携带自定义token 请根据实际情况自行修改
     }
