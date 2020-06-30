@@ -8,11 +8,22 @@
         <v-app-bar app clipped-left>
           <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title>我的聊天室</v-toolbar-title>
+          <div class="text-center">
+            <v-pagination v-model="page" :length="100" :total-visible="10" right></v-pagination>
+          </div>
         </v-app-bar>
         <v-main>
-          <v-container class="fill-height d-flex" align="start" justify="start" fluid>
+          <v-container class="fill-height d-flex" align="start" justify="start" fluid>  
+            <v-row v-for="item in messageData"  :key="item.id" :dense="dense">
+                  <v-col>
+                    <single-message :singleMessage=item.body :owner=item.owner></single-message>
+                  </v-col>
+            </v-row>
+
             <v-row>
-              <v-col></v-col>
+              <v-col>
+
+              </v-col>
             </v-row>
             <v-row>
               <v-col cols="23">
@@ -20,13 +31,6 @@
               </v-col>
               <v-col cols="1" align="center" justify="end">
                 <v-btn @click="sendMessage">发送</v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <div class="text-center">
-                  <v-pagination v-model="page" :length="100"></v-pagination>
-                </div>
               </v-col>
             </v-row>
           </v-container>
@@ -40,9 +44,10 @@
 </template>
 
 <script>
-import { update, detail } from "../utils/fetch.js";
-import UserList from "../components/UserList";
-import Footer from "../components/Footer";
+import singleMessage from '../components/singleMessage'
+import { update, detail } from "../utils/fetch.js"
+import UserList from "../components/UserList"
+import Footer from "../components/Footer"
 export default {
   name: "Chat",
   props: {
@@ -53,15 +58,21 @@ export default {
     message: {
       body: "",
     },
-    page:1
+    messageData:[],
+    page:1,
+    dense:true
   }),
   created() {
-
+    detail('/api/getNewMessage',{page: this.page}).then(res=>{
+     this.messageData=res.data.data;
+     console.log(this.messageData)
+    })
   },
 
   components: {
     UserList,
     Footer,
+    singleMessage
   },
   methods: {
     sendMessage() {
@@ -69,9 +80,7 @@ export default {
       update("/api/sendMessage", this.message).then((res) => {
         console.log(res);
       });
-      // axios.post('/api/sendMessage',stringify(this.body)).then(res=>{
-      //   console.log(res)
-      // })
+
     },
   },
 };
