@@ -9,23 +9,23 @@
           <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
           <v-toolbar-title>我的聊天室</v-toolbar-title>
           <div class="text-center">
-            <v-pagination v-model="page" :length="100" :total-visible="10" right></v-pagination>
+            <v-pagination v-model="page" :length="100" :total-visible="10" :page="page" @input="changePage"></v-pagination>
           </div>
         </v-app-bar>
-        <v-main>
-          <v-container class="fill-height d-flex" align="start" justify="start" fluid>  
+        <v-main style="height: 100%">
+          <v-container class="fill-height d-flex" align="start" justify="start" fluid style="height: 100%">  
+         
             <v-row v-for="item in messageData"  :key="item.id" :dense="dense">
                   <v-col>
                     <single-message :singleMessage=item.body :owner=item.owner></single-message>
                   </v-col>
             </v-row>
-
             <v-row>
               <v-col>
 
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="p-f">
               <v-col cols="23">
                 <v-text-field label="请发送信息" hide-details="auto" v-model="message.body"></v-text-field>
               </v-col>
@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import img from '../assets/logo.png'
+import { stringify } from 'qs'
 import singleMessage from '../components/singleMessage'
 import { update, detail } from "../utils/fetch.js"
 import UserList from "../components/UserList"
@@ -60,14 +62,18 @@ export default {
     },
     messageData:[],
     page:1,
-    dense:true
+    file:{file:img},
+    dense:true,
+    websock:null
   }),
   created() {
-    detail('/api/getNewMessage',{page: this.page}).then(res=>{
+    detail('/api/getNewMessage',{page: this.page-1}).then(res=>{
+      console.log(res)
      this.messageData=res.data.data;
-     console.log(this.messageData)
-    })
+    }),
+    this.initWebsocket()
   },
+ 
 
   components: {
     UserList,
@@ -76,15 +82,29 @@ export default {
   },
   methods: {
     sendMessage() {
-      console.log(this.body);
+      console.log(this.message);
       update("/api/sendMessage", this.message).then((res) => {
-        console.log(res);
-      });
-
+      //console.log(res);
+      }).catch(err=>{
+        console.log(err)
+      }).then(this.message.body=null)
     },
+    changePage(myPage){
+        detail('/api/getNewMessage',{page: myPage-1}).then(res=>{
+      this.messageData=res.data.data;
+    })
+    },
+    initWebsocket(){
+      this.websock=new WebSocket('ws://localhost:8099/app/hello');
+    }
   },
 };
 </script>
 
 <style>
+.p-f{
+  position: fixed;
+  bottom: 30px;
+  width: 100%;
+}
 </style>

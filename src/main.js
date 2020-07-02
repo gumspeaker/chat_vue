@@ -4,7 +4,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
-
+// import axios from "axios";
+// Vue.use(axios)
 Vue.config.productionTip = false
 // eslint-disable-next-line no-unused-vars
 router.beforeEach((to, from, next) => {

@@ -8,8 +8,8 @@ import store from '../store/index'
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = '39.101.192.76';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
 let config = {
    baseURL: 'http://39.101.192.76:8099',
    timeout: 60 * 1000, // Timeout

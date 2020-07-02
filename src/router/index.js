@@ -5,7 +5,7 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
-    redirect: '/login',
+    redirect: '/main',
     meta: { needLogin:false }
   },
   {
@@ -23,8 +23,13 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "about" */ '../views/MainChat.vue')
   },
   {
-     path: '/play', 
-     component: ()=>import('../views/payground.vue') 
+    path: '/pic',
+    name: 'pic',
+    meta: { needLogin:true },
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/pic.vue')
   }
 ]
 

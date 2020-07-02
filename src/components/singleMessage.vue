@@ -12,9 +12,9 @@
                 <p left>{{this.owner}}:</p>
                 
             </v-col>
-            <v-col cols="1" >
+            <v-col cols="auto">
                 <v-card color="" class="right">
-                    {{this.singleMessage}}
+                 {{this.singleMessage}}
                 </v-card>
             </v-col>
         </v-row>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="max">
    <router-view></router-view>
   </div>
 </template>
@@ -13,4 +13,12 @@ export default {
   }
 }
 </script>
-<s
+<style>
+.max{
+  width:100%;
+  height: 100%;
+  /* background-color: red; */
+}
+
+</style>
+
