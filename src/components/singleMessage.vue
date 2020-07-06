@@ -19,7 +19,7 @@
             </v-col>
             <v-col>
                 <v-card>
-                    {{this.}}
+                    <!-- {{this.}} -->
                 </v-card>
             </v-col>
         </v-row>
