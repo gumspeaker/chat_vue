@@ -8,10 +8,12 @@ import store from '../store/index'
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = '39.101.192.76';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
+axios.defaults.withCredentials=true;
+ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+//axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
 let config = {
    baseURL: 'http://39.101.192.76:8099',
+  //  baseURL: 'http://localhost:8099',
    timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
@@ -36,6 +38,7 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
   res => {
+   
     //console.log(res)
     const code = res.data.Rspmsg||res.status
     if (code === 401) {

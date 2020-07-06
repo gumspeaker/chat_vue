@@ -15,7 +15,7 @@
         <v-main style="height: 100%">
           <v-container class="fill-height d-flex" align="start" justify="start" fluid style="height: 100%">  
          
-            <v-row v-for="item in messageData"  :key="item.id" :dense="dense">
+            <v-row v-for="(item,name,index) in messageData"  :key="index" :dense="dense">
                   <v-col>
                     <single-message :singleMessage=item.body :owner=item.owner></single-message>
                   </v-col>
@@ -36,7 +36,7 @@
           </v-container>
         </v-main>
         <v-footer app>
-          <span>&copy; 2020</span>
+          <span>用户名称：{{username}}</span>
         </v-footer>
       </v-app>
     </div>
@@ -57,9 +57,11 @@ export default {
   },
   data: () => ({
     drawer: null,
+    username:localStorage.getItem('username'),
     message: {
       body: "",
     },
+    getOtherMessage:null,
     messageData:[],
     page:1,
     file:{file:img},
@@ -67,13 +69,34 @@ export default {
     websock:null
   }),
   created() {
+     let token=localStorage.getItem('token')
+     let username=localStorage.getItem('username')
+      update('/checkUser',{'token':token,'username':username}).then(res=>{
+
+      // console.log(res.data)
+    //  this.$store.commit('Login', {'token':token ,'username':username})
+
+    }).catch(err=>{
+      // console.log(err)
+      this.$router.push('/login');
+    })
     detail('/api/getNewMessage',{page: this.page-1}).then(res=>{
-      console.log(res)
-     this.messageData=res.data.data;
+      //console.log(res)
+     this.messageData=res.data.data.reverse();
     }),
     this.initWebsocket()
+
   },
- 
+  watch:{
+    getOtherMessage:function (param) {
+    // for (let index = 0; index < 9; index++) {
+    //           this.messageData[index]=this.messageData[index+1];
+    //         }
+    //         this.messageData[9]=params
+    this.messageData.shift();
+    this.messageData.push(param)
+    }
+  },
 
   components: {
     UserList,
@@ -82,20 +105,29 @@ export default {
   },
   methods: {
     sendMessage() {
-      console.log(this.message);
-      update("/api/sendMessage", this.message).then((res) => {
+      //console.log(this.message);
+    return update("/api/sendMessage", this.message).then((res) => {
       //console.log(res);
       }).catch(err=>{
         console.log(err)
-      }).then(this.message.body=null)
+      }).then(this.message.body="")
     },
     changePage(myPage){
         detail('/api/getNewMessage',{page: myPage-1}).then(res=>{
-      this.messageData=res.data.data;
+      this.messageData=res.data.data.reverse();
     })
     },
     initWebsocket(){
-      this.websock=new WebSocket('ws://localhost:8099/app/hello');
+      this.websock=new WebSocket('ws://39.101.192.76:8099/test');
+      this.websock.onerror=function(event){
+        //console.log(event);
+      }
+      this.websock.onmessage=(event)=>{
+        // console.log(this.messageData)
+         //console.log(event)
+
+            this.getOtherMessage=JSON.parse(event.data);
+      }
     }
   },
 };

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 <template>
 <div id="app">
     <v-app id="inspire">
@@ -42,6 +41,7 @@
                       type="text"
                       color="dark"
                       v-model="user.username"
+                      autocomplete="on"
                     ></v-text-field>
                     <v-text-field
                       id="password"
@@ -50,6 +50,7 @@
                       prepend-icon="mdi-lock"
                       type="password"
                       v-model="user.password"
+                      autocomplete="off"
                     ></v-text-field>
                   </v-form>
                 </v-card-text>
@@ -68,7 +69,6 @@
 
 <script>
 import {update,detail} from '../utils/fetch.js'
-import { constants } from 'zlib';
 export default {
     name:'LoginForm',
     props:{
@@ -96,8 +96,12 @@ export default {
     sendReq(){
       if(this.formType=='登录'){
      update('/login',this.user).then(res=>{
-       const token=res.headers.authorization
-       this.$store.commit('Login', token)
+
+       let token=res.data.data[1]
+       let username=res.data.data[0]
+       console.log(username)
+       this.$store.commit('Login', {'token':token ,'username':username})
+
        this.$router.push('/main')
      }).catch(err=>{
        console.log(err)

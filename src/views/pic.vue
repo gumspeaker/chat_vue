@@ -18,7 +18,7 @@ export default {
     },
     methods:{
         send(){
-            axios.post('http://39.101.192.76:8099/api/uploadImage',this.formData).then((result) => {
+            axios.post('/api/uploadImage',this.formData).then((result) => {
               console.log (result)     
             }).catch((err) => {
                 
@@ -35,4 +35,3 @@ export default {
 <style>
 
 </style>
-

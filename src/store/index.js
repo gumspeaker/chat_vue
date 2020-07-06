@@ -13,11 +13,11 @@ export default new Vuex.Store({
       state.myToken=localStorage.getItem("token")||''
       //state.User=localStorage.getItem("userName")||''
     },
-    Login(state,token){
-        //state.myToken=userInfo.token,
-        //state.userName=userInfo.userName
-        localStorage.setItem("token",token)
-        //localStorage.setItem("UserName",userInfo.UserName)
+    Login(state,userInfo){    
+        state.myToken=userInfo.token
+        state.userName=userInfo.username
+        localStorage.setItem("token",userInfo.token)
+        localStorage.setItem("username",userInfo.username)
     }
   },
   actions: {

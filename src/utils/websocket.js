@@ -1,3 +1,4 @@
+const path = 'http://39.101.192.76:8099'
 export function init(){
     if(typeof(WebSocket) === "undefined"){
         alert("您的浏览器不支持socket")
