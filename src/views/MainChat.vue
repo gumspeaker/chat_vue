@@ -6,7 +6,7 @@
           <user-list></user-list>
         </v-navigation-drawer>
         <v-app-bar app clipped-left>
-          <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon @click="drawer = !drawer" ></v-app-bar-nav-icon>
           <v-toolbar-title>我的聊天室</v-toolbar-title>
           <div class="text-center">
             <v-pagination v-model="page" :length="100" :total-visible="10" :page="page" @input="changePage"></v-pagination>
@@ -68,7 +68,7 @@ export default {
     dense:true,
     websock:null
   }),
-  created() {
+  mounted() {
      let token=localStorage.getItem('token')
      let username=localStorage.getItem('username')
       update('/checkUser',{'token':token,'username':username}).then(res=>{

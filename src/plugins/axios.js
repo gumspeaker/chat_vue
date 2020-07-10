@@ -30,7 +30,7 @@ _axios.interceptors.request.use(
     return config
   },
   error => {
-    console.log(error)
+    //  console.log(error)
     Promise.reject(error)
   }
 );
@@ -39,39 +39,15 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
   res => {
    
-    //console.log(res)
-    const code = res.data.Rspmsg||res.status
-    if (code === 401) {
-      // MessageBox.confirm(
-      //   '登录状态已过期，您可以继续留在该页面，或者重新登录',
-      //   '系统提示',
-      //   {
-      //     confirmButtonText: '重新登录',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      //   }
-      // ).then(() => {
-      //   store.dispatch('LogOut').then(() => {
-      //     location.reload() // 为了重新实例化vue-router对象 避免bug
-      //   })
-      // })
-      return Promise.reject('error')
-    } else if (code !== 200) {
-      // Notification.error({
-      //   title: res.data.msg
-      // })
-      return Promise.reject('error')
-    } else {
+    
+    const code = res.data.rspCode||res.status
+
+
       return res
-    }
+    
   },
   error => {
-    console.log('err' + error)
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
+    // console.log('err' + error)
     return Promise.reject(error)
   }
 );

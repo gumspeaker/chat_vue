@@ -1,10 +1,12 @@
 <template>
 <div id="app">
+  
     <v-app id="inspire">
       <v-main>
         <v-container
           class="fill-height"
           fluid>
+           <Alert :alertConfig="alertConfig"></Alert>
           <v-row
             align="center"
             justify="center">
@@ -19,7 +21,7 @@
                 >
                   <v-toolbar-title>{{formBarName}}</v-toolbar-title>
                   <v-spacer></v-spacer>
-                  <v-tooltip bottom>
+                  <v-tooltip top>
                     <template v-slot:activator="{ on }">
                       <v-btn
                         :href="source"
@@ -33,26 +35,7 @@
                   </v-tooltip>
                 </v-toolbar>
                 <v-card-text>
-                  <v-form>
-                    <v-text-field
-                      label="Login"
-                      name="login"
-                      prepend-icon="mdi-account"
-                      type="text"
-                      color="dark"
-                      v-model="user.username"
-                      autocomplete="on"
-                    ></v-text-field>
-                    <v-text-field
-                      id="password"
-                      label="Password"
-                      name="password"
-                      prepend-icon="mdi-lock"
-                      type="password"
-                      v-model="user.password"
-                      autocomplete="off"
-                    ></v-text-field>
-                  </v-form>
+                  <Form :userInfo="user" :formType="formType"></Form>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -68,9 +51,16 @@
 </template>
 
 <script>
+import Alert from '../components/Alert'
+import Form from '../components/Form'
 import {update,detail} from '../utils/fetch.js'
+import { urlencoded } from 'body-parser';
 export default {
     name:'LoginForm',
+    components:{
+      Form,
+      Alert
+    },
     props:{
         source: String
     },
@@ -79,7 +69,12 @@ export default {
              formBarName:'登录',
              btnType:'注册',
             formType:'登录',
-            user:{username:'',password:''}    
+            user:{username:'',password:''},
+            alertConfig:{
+              display:false,
+              message:'',
+              type:'success'
+            }    
         }
     },
     watch:{
@@ -89,33 +84,56 @@ export default {
         }
     },
     methods: {
-    changeFormType(){
-        this.formType=this.formType=='登录'?'注册':'登录'
-        },
-        
-    sendReq(){
-      if(this.formType=='登录'){
-     update('/login',this.user).then(res=>{
-
-       let token=res.data.data[1]
-       let username=res.data.data[0]
-       console.log(username)
-       this.$store.commit('Login', {'token':token ,'username':username})
-
-       this.$router.push('/main')
-     }).catch(err=>{
-       console.log(err)
-     })
-      }
-      else{
-        update('/sign',this.user).then(res=>{
-          //console.log(res)
+      changeFormType(){
+          this.formType=this.formType=='登录'?'注册':'登录'
+          },
+      Login(){
+          update('/login',this.user).then(res=>{
+            console.log(res)
+          let token = res.data.data[1]
+          let username = res.data.data[0]
+          this.alertConfig={
+              display:true,
+              message:'登陆成功',
+              type:'success'
+            }    
+          this.$store.commit('Login', {'token':token ,'username':username})
+          this.$router.push('/main')
+          
         }).catch(err=>{
           console.log(err)
+              this.alertConfig={
+              display:true,
+              message:'登陆失败',
+              type:'error'
+            }   
+             return {'token':err.token,'username':err.username}
         })
-      }
+      },
+      Sign(){
+        update('/sign',this.user).then(res=>{
+            console.log(res)
+              this.alertConfig={
+              display:true,
+              message:'注册成功',
+              type:'success'
+            }   
+        }).catch(err=>{
+          console.log(err)
+              this.alertConfig={
+              display:true,
+              message:'注册失败,用户已存在',
+              type:'error'
+            } 
+        })
+      },  
+      sendReq(){
+        if(this.formType=='登录')
+          this.Login();        
+        else
+          this.Sign();
       
-    }
+      }
 }
 }
 </script>

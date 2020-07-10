@@ -8,8 +8,8 @@
         </v-avatar>
         
             </v-col>
-            <v-col cols="1" class="left">
-                <p left>{{this.owner}}:</p>
+            <v-col cols="2" class="left">
+                <p >{{this.owner}}:</p>
                 
             </v-col>
             <v-col cols="auto">

@@ -33,7 +33,7 @@ export default {
   methods:{ 
     getUserList(){
       detail('/getAllUser',).then((res) => {
-        console.log(res.data.data)
+        // console.log(res.data.data)
         this.userList=res.data.data
       }).catch((err) => {
         
