@@ -112,6 +112,23 @@ export default {
         console.log(err)
       }).then(this.message.body="")
     },
+    sendImage(){
+      this.$refs.fileInput.click()
+    },
+    getFile (event) {
+      let file = event.target.files[0];
+      let fileName = file.name.replace(/\.[^/.]+$/, ".png")
+      console.log(fileName)
+      this.imageFormData.append("file",file); 
+      // console.log(event)        //只有一个文件
+      if ( file.name.lastIndexOf('.') <= 0 ) {
+        return alert("Please add a valid image!")        //判断图片是否有效
+      }
+      updateImage("/api/uploadImage",this.imageFormData).then((result) => {
+          console.log(result)
+      }).catch((err) => {
+      });
+    },
     changePage(myPage){
         detail('/api/getNewMessage',{page: myPage-1}).then(res=>{
       this.messageData=res.data.data.reverse();
