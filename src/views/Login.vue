@@ -44,6 +44,9 @@
               </v-card>
             </v-col>
           </v-row>
+          <!-- <v-row>
+            <waifu></waifu>
+          </v-row> -->
         </v-container>
       </v-main>
     </v-app>
@@ -55,14 +58,19 @@ import Alert from '../components/Alert'
 import Form from '../components/Form'
 import {update,detail} from '../utils/fetch.js'
 import { urlencoded } from 'body-parser';
+// import Waifu from '../components/wife'
 export default {
     name:'LoginForm',
     components:{
       Form,
       Alert
+      // Waifu
     },
     props:{
         source: String
+    },
+    created(){
+      //console.log(process.env)
     },
     data(){
         return{

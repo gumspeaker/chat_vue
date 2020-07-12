@@ -9,11 +9,12 @@ import store from '../store/index'
 // axios.defaults.baseURL = '39.101.192.76';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 axios.defaults.withCredentials=true;
- axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+ //axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 //axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
 let config = {
-   baseURL: 'http://39.101.192.76:8099',
-  //  baseURL: 'http://localhost:8099',
+  // baseURL: 'http://39.101.192.76:8099',
+   // baseURL: 'http://localhost:8099',
+   baseURL:process.env.VUE_APP_BASE_URL,
    timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };

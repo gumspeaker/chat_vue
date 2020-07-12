@@ -12,3 +12,10 @@ export function update (api,params) {
       body: params
     })
   }
+
+  export function updateImage (api,params) {
+    return fetch(api, {
+      body:params,
+      headers: {'Content-Type': 'multipart/form-data'}
+    })
+  }

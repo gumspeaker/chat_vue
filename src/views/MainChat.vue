@@ -12,12 +12,12 @@
             <v-pagination v-model="page" :length="100" :total-visible="10" :page="page" @input="changePage"></v-pagination>
           </div>
         </v-app-bar>
-        <v-main style="height: 100%">
+        <v-main >
           <v-container class="fill-height d-flex" align="start" justify="start" fluid style="height: 100%">  
          
             <v-row v-for="(item,name,index) in messageData"  :key="index" :dense="dense">
                   <v-col>
-                    <single-message :singleMessage=item.body :owner=item.owner></single-message>
+                    <single-message :singleMessage="item" ></single-message>
                   </v-col>
             </v-row>
             <v-row>
@@ -26,11 +26,28 @@
               </v-col>
             </v-row>
             <v-row class="p-f">
-              <v-col cols="23">
+              <v-col cols="22">
                 <v-text-field label="请发送信息" hide-details="auto" v-model="message.body"></v-text-field>
               </v-col>
               <v-col cols="1" align="center" justify="end">
                 <v-btn @click="sendMessage">发送</v-btn>
+              </v-col>
+              <v-col cols="1" align="center" justify="end">
+                  <input 
+                    type="file" 
+                    ref="fileInput" 
+                    accept="image/*" 
+                    @change="getFile"
+                    style="display: none"
+                  > 
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on}">
+                        <v-btn
+                          v-on="on"
+                         @click="sendImage">发图</v-btn>
+                    </template>
+                    <span>图片大小最好不要过1M</span>
+                  </v-tooltip>
               </v-col>
             </v-row>
           </v-container>
@@ -44,10 +61,11 @@
 </template>
 
 <script>
+import axios from 'axios'
 import img from '../assets/logo.png'
 import { stringify } from 'qs'
 import singleMessage from '../components/singleMessage'
-import { update, detail } from "../utils/fetch.js"
+import { update, detail,updateImage } from "../utils/fetch.js"
 import UserList from "../components/UserList"
 import Footer from "../components/Footer"
 export default {
@@ -61,6 +79,7 @@ export default {
     message: {
       body: "",
     },
+    imageFormData:new FormData(),
     getOtherMessage:null,
     messageData:[],
     page:1,
@@ -68,13 +87,15 @@ export default {
     dense:true,
     websock:null
   }),
-  mounted() {
+  created() {
+    // console.log(process.env)
      let token=localStorage.getItem('token')
      let username=localStorage.getItem('username')
+     //console.log(username)
       update('/checkUser',{'token':token,'username':username}).then(res=>{
 
-      // console.log(res.data)
-    //  this.$store.commit('Login', {'token':token ,'username':username})
+       //console.log(res.data)
+      this.$store.commit('Login', {'token':token ,'username':username})
 
     }).catch(err=>{
       // console.log(err)
@@ -89,12 +110,11 @@ export default {
   },
   watch:{
     getOtherMessage:function (param) {
-    // for (let index = 0; index < 9; index++) {
-    //           this.messageData[index]=this.messageData[index+1];
-    //         }
-    //         this.messageData[9]=params
-    this.messageData.shift();
+      if(this.page==1){
+            if(this.messageData.length>=10)    
+            this.messageData.shift();
     this.messageData.push(param)
+      }
     }
   },
 
@@ -106,6 +126,9 @@ export default {
   methods: {
     sendMessage() {
       //console.log(this.message);
+      if(this.message.body==''||this.message.body==null)
+      window.alert('message不能为空')
+      else
     return update("/api/sendMessage", this.message).then((res) => {
       //console.log(res);
       }).catch(err=>{
@@ -117,25 +140,32 @@ export default {
     },
     getFile (event) {
       let file = event.target.files[0];
-      let fileName = file.name.replace(/\.[^/.]+$/, ".png")
-      console.log(fileName)
+      console.log(file.name)
+       file.name.replace(/\.[^/.]+$/, ".png")
+      // console.log(file)
+      //可能存在上次的file文件仍然存在在imageFormData里，因为formData是长期存在的，所以要删除前一次的数据
+      if(this.imageFormData.has("file"))
+      this.imageFormData.delete("file")
       this.imageFormData.append("file",file); 
       // console.log(event)        //只有一个文件
       if ( file.name.lastIndexOf('.') <= 0 ) {
         return alert("Please add a valid image!")        //判断图片是否有效
       }
       updateImage("/api/uploadImage",this.imageFormData).then((result) => {
-          console.log(result)
+          // console.log(result)
       }).catch((err) => {
       });
     },
     changePage(myPage){
         detail('/api/getNewMessage',{page: myPage-1}).then(res=>{
-      this.messageData=res.data.data.reverse();
+          if(res.data.data=="没有消息了")
+          window.alert("没有消息了")
+          else
+          this.messageData=res.data.data.reverse();
     })
     },
     initWebsocket(){
-      this.websock=new WebSocket('ws://39.101.192.76:8099/test');
+      this.websock=new WebSocket(process.env.VUE_APP_WEBSOCK_WS+'/test');
       this.websock.onerror=function(event){
         //console.log(event);
       }
