@@ -97,7 +97,7 @@ export default {
           },
       Login(){
           update('/login',this.user).then(res=>{
-            console.log(res)
+            //console.log(res)
           let token = res.data.data[1]
           let username = res.data.data[0]
           this.alertConfig={
@@ -107,7 +107,6 @@ export default {
             }    
           this.$store.commit('Login', {'token':token ,'username':username})
           this.$router.push('/main')
-          
         }).catch(err=>{
           console.log(err)
               this.alertConfig={
@@ -120,19 +119,20 @@ export default {
       },
       Sign(){
         update('/sign',this.user).then(res=>{
-            console.log(res)
+         // console.log(res)
+            if(res.data.rspCode=="200")
               this.alertConfig={
               display:true,
               message:'注册成功',
               type:'success'
             }   
-        }).catch(err=>{
-          console.log(err)
+            else{
               this.alertConfig={
               display:true,
-              message:'注册失败,用户已存在',
+              message:res.data.data,
               type:'error'
-            } 
+            }   
+            }
         })
       },  
       sendReq(){
